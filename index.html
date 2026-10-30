@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A build template that shows one website going from Mermaid flow plans to finished UI, styled more fully as you scroll.">
+<title>Fidelity Gradient Template</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-width bands, one per build stage. Each band blends from the previous band's ground into its own, and styling fidelity rises band by band: browser default → plain-text spec → wireframe → lo-fi → tokens → components → hi-fi → ship. */
+:root{
+  --raw-bg:#ffffff; --raw-fg:#000000; --raw-link:#0000ee;
+  --txt-bg:#fafaf8; --txt-fg:#1b1b1b; --txt-line:#1b1b1b; --txt-muted:#6b6b6b;
+  --wf-bg:#f1f1f1; --wf-box:#ffffff; --wf-line:#2a2a2a; --wf-fill:#d4d4d4; --wf-note:#c43d2f;
+  --lo-bg:#ececec; --lo-surface:#f9f9f9; --lo-line:#c9c9c9; --lo-fg:#202020; --lo-muted:#666666;
+  --bg:#f5f7f8; --surface:#ffffff; --surface-2:#eef2f3; --line:#dfe5e7;
+  --fg:#12191c; --muted:#5b686d; --accent:#0e7a6c; --accent-soft:#d9efeb; --accent-fg:#ffffff;
+  --glow:rgba(14,122,108,.16);
+  --shadow:0 1px 2px rgba(16,40,44,.05),0 8px 24px -12px rgba(16,40,44,.14);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --raw-bg:#121212; --raw-fg:#e8e8e8; --raw-link:#8ab4f8;
+  --txt-bg:#141413; --txt-fg:#e2e2de; --txt-line:#bdbdb8; --txt-muted:#9a9a95;
+  --wf-bg:#161616; --wf-box:#1e1e1e; --wf-line:#cfcfcf; --wf-fill:#3a3a3a; --wf-note:#ff8a7a;
+  --lo-bg:#171919; --lo-surface:#1f2222; --lo-line:#3a3e3f; --lo-fg:#e3e6e6; --lo-muted:#9aa0a2;
+  --bg:#0c1113; --surface:#141b1e; --surface-2:#1b2427; --line:#263236;
+  --fg:#e8eef0; --muted:#93a2a7; --accent:#4cc3b0; --accent-soft:#163430; --accent-fg:#06201c;
+  --glow:rgba(76,195,176,.14);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --raw-bg:#121212; --raw-fg:#e8e8e8; --raw-link:#8ab4f8;
+  --txt-bg:#141413; --txt-fg:#e2e2de; --txt-line:#bdbdb8; --txt-muted:#9a9a95;
+  --wf-bg:#161616; --wf-box:#1e1e1e; --wf-line:#cfcfcf; --wf-fill:#3a3a3a; --wf-note:#ff8a7a;
+  --lo-bg:#171919; --lo-surface:#1f2222; --lo-line:#3a3e3f; --lo-fg:#e3e6e6; --lo-muted:#9aa0a2;
+  --bg:#0c1113; --surface:#141b1e; --surface-2:#1b2427; --line:#263236;
+  --fg:#e8eef0; --muted:#93a2a7; --accent:#4cc3b0; --accent-soft:#163430; --accent-fg:#06201c;
+  --glow:rgba(76,195,176,.14);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{background:var(--bg);margin:0}
+.band{padding-block:48px 56px}
+.in{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.scroll-x{overflow-x:auto}
+
+/* STAGE 0 · browser default */
+.s0{background:var(--raw-bg);color:var(--raw-fg);font-family:"Times New Roman",Times,serif;font-size:16px;line-height:1.35}
+.s0 a{color:var(--raw-link)}
+.s0 h1{font-size:2em;margin:.67em 0}
+.s0 h2{font-size:1.5em;margin:.83em 0}
+.s0 h3{font-size:1.17em;margin:1em 0}
+.s0 hr{border:0;border-top:1px solid currentColor;opacity:.5;margin:2em 0}
+.s0 blockquote{margin:1em 40px}
+@media (max-width:600px){.s0 blockquote{margin:1em 0 1em 16px}}
+.s0 pre.mermaid{background:transparent;margin:0 0 1.5em}
+
+/* STAGE 1 · plain-text spec */
+.s1{background:linear-gradient(var(--raw-bg),var(--txt-bg) 140px);color:var(--txt-fg);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;line-height:1.55}
+.s1 h2,.s1 h3{font-size:14px;font-weight:700;margin:1.6em 0 .6em}
+.s1 h2::before{content:"## "}.s1 h3::before{content:"### "}
+.s1 table{border-collapse:collapse;width:100%;min-width:640px}
+.s1 th,.s1 td{border:1px solid var(--txt-line);padding:6px 8px;text-align:left;vertical-align:top}
+.s1 .muted{color:var(--txt-muted)}
+.s1 ul{padding-left:2ch}
+
+/* STAGE 2 · wireframe */
+.s2{background:linear-gradient(var(--txt-bg),var(--wf-bg) 140px);color:var(--wf-line);font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5}
+.s2 .wf-wrap{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:760px){.s2 .wf-wrap{grid-template-columns:minmax(0,1fr)}}
+.s2 .frame{border:2px solid var(--wf-line);background:var(--wf-box);padding:12px;display:flex;flex-direction:column;gap:10px}
+.s2 .frame-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.s2 .desk{display:grid;grid-template-columns:1fr 3fr;gap:10px}
+.s2 .col{display:flex;flex-direction:column;gap:10px}
+.s2 .box{border:1.5px dashed var(--wf-line);padding:8px;display:flex;flex-direction:column;gap:6px;position:relative;min-height:40px}
+.s2 .x{background:
+  linear-gradient(to top right,transparent calc(50% - 1px),var(--wf-fill) 50%,transparent calc(50% + 1px)),
+  linear-gradient(to bottom right,transparent calc(50% - 1px),var(--wf-fill) 50%,transparent calc(50% + 1px))}
+.s2 .line{height:8px;background:var(--wf-fill)}
+.s2 .line.w60{width:60%}.s2 .line.w80{width:80%}.s2 .line.w40{width:40%}
+.s2 .line.big{height:16px;width:70%}
+.s2 .rowN{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.s2 .rowN .box{min-height:28px;padding:4px}
+.s2 .tag{position:absolute;top:-10px;right:6px;background:var(--wf-box);color:var(--wf-note);font-size:12px;font-weight:700;padding:0 4px}
+.s2 .notes{color:var(--wf-note);font-size:14px;margin:0;padding-left:1.2em}
+.s2 .mob{display:flex;flex-direction:column;gap:8px;max-width:240px}
+.s2 .mob .chips{display:flex;gap:6px}.s2 .mob .chips .box{flex:1;min-height:22px;padding:4px}
+
+/* STAGE 3 · lo-fi */
+.s3{background:linear-gradient(var(--wf-bg),var(--lo-bg) 140px);color:var(--lo-fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.6}
+.s3 .lo{display:grid;grid-template-columns:220px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:760px){.s3 .lo{grid-template-columns:minmax(0,1fr)}}
+.s3 nav,.s3 .panel{background:var(--lo-surface);border:1px solid var(--lo-line);padding:14px}
+.s3 nav ol{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px}
+.s3 nav a{color:var(--lo-fg)}
+.s3 .panel h3{margin:0 0 4px;font-size:20px}
+.s3 .muted{color:var(--lo-muted)}
+.s3 .panel ul{margin:10px 0 0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
+
+/* STAGES 4–7 · system */
+.sys{color:var(--fg);font-family:var(--body);font-size:15.5px;line-height:1.65}
+.sys h3{font-family:var(--display);letter-spacing:-.01em;text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.s4{background:linear-gradient(var(--lo-bg),var(--bg) 180px)}
+.s4 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.s4 .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.swatches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sw{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.sw i{display:block;height:40px;border-radius:8px;border:1px solid var(--line)}
+.specimen{display:flex;flex-direction:column;gap:6px}
+.specimen .d{font-family:var(--display);font-size:30px;font-weight:700;line-height:1.1}
+.specimen .m{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.radii{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.radii div{display:flex;flex-direction:column;gap:4px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.radii i{display:block;width:46px;height:46px;background:var(--accent-soft);border:1.5px solid var(--accent)}
+
+.s5{background:var(--bg)}
+.s5 .matrix{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.s5 .spec{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.s5 .spec.wide{grid-column:1/-1}
+.states{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cap{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.pill{font-family:var(--mono);font-size:12px;padding:5px 11px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.src{font-family:var(--mono);font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--fg);background:var(--surface)}
+.src b{color:var(--accent);font-weight:500}
+.btn{font:500 13.5px var(--body);border:0;border-radius:999px;padding:9px 16px;background:var(--fg);color:var(--bg);cursor:pointer;transition:transform .12s,opacity .15s}
+.btn:hover{opacity:.88}.btn:active{transform:scale(.97)}
+.btn.done{background:var(--accent);color:var(--accent-fg)}
+.navlink{display:flex;gap:10px;align-items:baseline;padding:8px 10px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:14px;line-height:1.35}
+.navlink span{font-family:var(--mono);font-size:11.5px}
+.navlink.hover,.navlink:hover{background:var(--surface-2);color:var(--fg)}
+.navlink.active{background:var(--accent-soft);color:var(--fg)}.navlink.active span{color:var(--accent)}
+.check{display:flex;gap:12px;align-items:flex-start;background:var(--surface-2);border-radius:14px;padding:14px 16px;cursor:pointer;transition:background .15s;height:100%}
+.check input{appearance:none;flex:none;width:20px;height:20px;border-radius:7px;border:1.5px solid var(--muted);margin:2px 0 0;display:grid;place-content:center;cursor:pointer;background:var(--surface)}
+.check input:checked{background:var(--accent);border-color:var(--accent)}
+.check input:checked::after{content:"";width:9px;height:5px;border-left:2px solid var(--accent-fg);border-bottom:2px solid var(--accent-fg);transform:rotate(-45deg) translate(1px,-1px)}
+.check:has(input:checked){background:var(--accent-soft)}
+.check span{font-size:14px;line-height:1.5}.check b{display:block;font-weight:600}
+
+/* layout decision helper */
+.decide{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px}
+@media (max-width:720px){.decide{grid-template-columns:minmax(0,1fr)}}
+.qs{display:flex;flex-direction:column;gap:10px}
+.q{display:flex;flex-direction:column;gap:6px;background:var(--surface-2);border-radius:14px;padding:12px 14px}
+.q[aria-disabled="true"]{opacity:.45}
+.q p{margin:0;font-size:14px;font-weight:500}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;align-self:flex-start}
+.seg button{font:500 13px var(--body);border:0;background:transparent;color:var(--muted);padding:5px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+.seg button:disabled{cursor:not-allowed}
+.result{background:var(--accent-soft);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.result h4{font-family:var(--display);font-size:22px;margin:0;letter-spacing:-.01em}
+.result p{margin:0;font-size:14px}
+.mini{display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.mini i{display:block;height:9px;border-radius:4px;background:var(--surface);opacity:.9}
+.mini i.c{margin-left:18px;height:7px;opacity:.7}
+.mini.md{flex-direction:row;gap:6px}.mini.md div{display:flex;flex-direction:column;gap:3px;flex:1}.mini.md div:last-child{flex:1.6}.mini.md div:last-child i{height:20px}
+
+/* stage 6 hi-fi */
+.s6{background:radial-gradient(900px 380px at 15% 0%,var(--glow),transparent 70%),var(--bg)}
+.hf{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:820px){.hf{grid-template-columns:minmax(0,1fr)}.hf-toc{display:none}}
+.hf-toc{position:sticky;top:calc(20px + env(safe-area-inset-top,0px));background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:2px}
+.hf-toc{transition:padding .35s cubic-bezier(.2,.7,.2,1),border-radius .35s cubic-bezier(.2,.7,.2,1)}
+.hf-toc.rolled{padding:8px;border-radius:999px}
+.toc-head{display:flex;align-items:center;gap:8px;padding:2px 2px 6px 10px;transition:padding .35s}
+.hf-toc.rolled .toc-head{padding:0 0 0 10px}
+.toc-head .eyebrow{flex:none}
+.toc-current{flex:1;min-width:0;font-size:13px;font-weight:500;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(4px);transition:opacity .25s .1s,transform .3s .1s}
+.hf-toc.rolled .toc-current{opacity:1;transform:none}
+.caret{margin-left:auto;flex:none;width:30px;height:30px;border-radius:999px;border:0;background:var(--surface-2);color:var(--fg);display:grid;place-content:center;cursor:pointer;transition:background .15s}
+.caret:hover{background:var(--accent-soft)}
+.caret svg{transform:rotate(180deg);transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.hf-toc.rolled .caret svg{transform:rotate(0deg)}
+.toc-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .5s cubic-bezier(.2,.7,.2,1)}
+.hf-toc.rolled .toc-body{grid-template-rows:0fr}
+.toc-roll{overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:2px;transform-origin:top center;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.hf-toc.rolled .toc-roll{transform:perspective(500px) rotateX(-55deg)}
+.toc-roll a{transition:opacity .25s,transform .35s,background .15s,color .15s;transition-delay:calc(var(--i) * 35ms)}
+.hf-toc.rolled .toc-roll a{opacity:0;transform:translateY(-10px);transition-delay:calc((6 - var(--i)) * 25ms)}
+.hf-main{display:flex;flex-direction:column;gap:18px;min-width:0}
+.roll-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;counter-reset:rs}
+.roll-steps li{counter-increment:rs;background:var(--surface-2);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-size:13.5px;line-height:1.5}
+.roll-steps li::before{content:"Step " counter(rs);font-family:var(--mono);font-size:11px;color:var(--accent)}
+.roll-steps b{font-weight:600;font-size:14px}
+.hf-card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(20px,3.6vw,36px);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px}
+.hf-card h1{font-family:var(--display);font-size:clamp(32px,5vw,50px);line-height:1.04;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.hf-card h2{font-family:var(--display);font-size:clamp(22px,2.6vw,27px);line-height:1.15;letter-spacing:-.015em;margin:0;text-wrap:balance}
+.lede{color:var(--muted);font-size:17px;max-width:60ch;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.chapters{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.chapters li{background:var(--surface-2);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.chapters em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--accent)}
+.chapters b{font-weight:600;font-size:14px;line-height:1.3}
+.chapters li:last-child{background:var(--accent);color:var(--accent-fg)}.chapters li:last-child em{color:var(--accent-fg);opacity:.85}
+.items{list-style:none;margin:0;padding:0}
+.items li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;padding:12px 4px;border-top:1px solid var(--line)}
+.items li:first-child{border-top:0}
+.items li::before{content:"";width:8px;height:8px;border-radius:3px;background:var(--accent);margin:9px 0 0 4px}
+.items p{margin:0;max-width:66ch}.items strong{font-weight:600}
+.prompt{background:var(--surface-2);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.prompt p{margin:0;max-width:70ch}
+.prompt ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;counter-reset:p}
+.prompt ol li{counter-increment:p;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;background:var(--surface);border-radius:10px;padding:12px 14px;font-size:14.5px}
+.prompt ol li::before{content:counter(p);font-family:var(--mono);font-size:12px;width:24px;height:24px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:grid;place-content:center}
+.prompt-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+.s7{background:linear-gradient(var(--bg),var(--surface-2))}
+.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.progress{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.bar{flex:1;max-width:260px;height:6px;border-radius:999px;background:var(--surface);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .3s}
+.ship{display:flex;flex-direction:column;gap:18px}
+
+/* stage header */
+.sh{display:flex;flex-direction:column;gap:6px;margin-bottom:24px;max-width:70ch}
+.sh p{margin:0}
+.meter{display:flex;gap:4px}
+.meter i{width:22px;height:5px;border-radius:999px;background:var(--line)}
+.meter i.on{background:var(--accent)}
+.sys .sh h2{font-family:var(--display);font-size:clamp(26px,3.4vw,36px);line-height:1.1;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.sys .sh .what{color:var(--muted);font-size:16.5px}
+.dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;margin:6px 0 0}
+.dl dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.dl dd{margin:0}
+.s0 .dl dt,.s1 .dl dt,.s2 .dl dt,.s3 .dl dt{font-family:inherit;text-transform:none;letter-spacing:0;color:inherit;font-weight:700;font-size:inherit;padding:0}
+</style>
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<!-- ===================== STAGE 0 ===================== -->
+<div class="band s0" id="stage-0">
+  <div class="in">
+    <h1>Fidelity Gradient Template</h1>
+    <p>This page builds one website from its brief to a finished page. The website is a <i>practitioner's guide to replacing a paper-based government workflow with a web application</i>, and its brief is the research prompt quoted below. Each band down the page is one stage of the work, styled only as far as the project had got at that stage. The top looks like a browser with no CSS. The bottom looks like the shipped site.</p>
+    <p>Stages:</p>
+    <ol>
+      <li><a href="#stage-0">Plan the flow</a></li>
+      <li><a href="#stage-1">Requirements</a></li>
+      <li><a href="#stage-2">Wireframe</a></li>
+      <li><a href="#stage-3">Content in structure</a></li>
+      <li><a href="#stage-4">Design tokens</a></li>
+      <li><a href="#stage-5">Components</a></li>
+      <li><a href="#stage-6">Hi-fi assembly</a></li>
+      <li><a href="#stage-7">Validate and ship</a></li>
+    </ol>
+    <h3>The brief</h3>
+    <blockquote>
+      <p>I'm replacing a paper-based government workflow with a web application (ASP.NET stack, public-sector context, must meet WCAG 2.1 AA / ADA Title II and records-retention requirements). Research how experienced UX and service designers approach this, and produce a practitioner's guide covering:</p>
+      <ol>
+        <li>Discovery from raw material. How to analyze the paper forms (blank and filled, with annotations), the physical filing system, staff shadow spreadsheets and logbooks, the governing policy, and real retrieval requests. Include contextual inquiry, swimlane process mapping and service blueprinting, and how to tell when to redesign a step rather than digitize it.</li>
+        <li>Object modeling. How OOUX/ORCA (objects, relationships, calls to action, attributes) and a field inventory turn that material into a domain model, and how that model decides between a flat row, an expandable row, a nested grid, a master-detail layout, or a drill-in detail page. Give concrete decision criteria and examples from GOV.UK, USWDS, Carbon, Fluent and Salesforce Lightning.</li>
+        <li>Finding things in context. When the primary entry point should be a work queue, browsing, simple search, faceted filtering, grouping, or advanced search and saved queries. How the filing system and retrieval requests should set the facets and search fields, and what NN/g and other evidence says about each pattern.</li>
+        <li>Grid design. Choosing default columns, sorting, grouping, bulk actions, inline versus panel editing, and accessible ARIA grid versus table implementation.</li>
+        <li>Workflow patterns. Statuses, task lists, save-and-resume, review and approval, exceptions, audit trail.</li>
+        <li>Sequencing. A recommended build order as thin vertical slices, with the reasoning for it.</li>
+        <li>Validation. How to set a paper-process baseline and prove the new system is better: usability metrics, a known-item retrieval test, tree testing, search log analysis, operational KPIs, accessibility audit.</li>
+      </ol>
+      <p>Cite primary sources (design system documentation, NN/g and Baymard research, W3C APG, government digital service guidance) and name specific tools for each method.</p>
+    </blockquote>
+    <hr>
+    <div class="sh">
+      <p>Stage 1 of 8. Fidelity: [#-------]</p>
+      <h2>Plan the flow</h2>
+      <p>Before any layout or color, draw what the guide is made of, how a reader moves through it, and how the build will run. These diagrams are what every later stage is checked against.</p>
+      <dl class="dl"><dt>Input:</dt><dd>The brief above: 7 chapters plus a sources requirement.</dd><dt>Output:</dt><dd>Three diagrams.</dd><dt>Done when:</dt><dd>Every chapter and every reader goal appears in a diagram.</dd></dl>
+    </div>
+
+    <h3>1. Guide structure and how chapters feed each other</h3>
+    <div class="scroll-x"><pre class="mermaid">
+flowchart TD
+  H[Header: brief, scope tags, chapter map] --> C1
+  C1[1 Discovery from raw material] --> C2[2 Object modeling]
+  C2 --> C3[3 Finding things in context]
+  C3 --> C4[4 Grid design]
+  C4 --> C5[5 Workflow patterns]
+  C5 --> C6[6 Sequencing]
+  C6 --> C7[7 Validation]
+  C7 --> S[Sources by type]
+  C1 -. filing system sets facets .-> C3
+  C2 -. relationships decide layout .-> C4
+  C1 -. retrieval requests become test set .-> C7
+  N[Sticky chapter nav] -.-> C1
+  N -.-> C4
+  N -.-> C7
+</pre></div>
+
+    <h3>2. Reader journey</h3>
+    <div class="scroll-x"><pre class="mermaid">
+flowchart LR
+  A([Open guide]) --> B[Scan header and chapter map]
+  B --> Q{What is the reader doing?}
+  Q -->|Starting a project| D[Ch 1 Discovery]
+  Q -->|Choosing a list layout| L[Ch 2 layout helper]
+  Q -->|Planning the build| S[Ch 6 Sequencing]
+  Q -->|Proving it works| V[Ch 7 checklist]
+  L --> G[Ch 4 Grid design]
+  V --> K[(Ticks saved in browser)]
+  B --> P[Copy the brief]
+  P --> R([Paste into research tool])
+</pre></div>
+
+    <h3>3. Build process (this page)</h3>
+    <div class="scroll-x"><pre class="mermaid">
+flowchart LR
+  A[Plan flow] --> B[Requirements]
+  B --> C[Wireframe]
+  C --> D[Content in structure]
+  D --> E[Design tokens]
+  E --> F[Components]
+  F --> G[Hi-fi assembly]
+  G --> H[Validate and ship]
+  H -. findings .-> B
+</pre></div>
+  </div>
+</div>
+
+<!-- ===================== STAGE 1 ===================== -->
+<div class="band s1" id="stage-1">
+  <div class="in">
+    <div class="sh">
+      <p>Stage 2 of 8 · Fidelity [##------]</p>
+      <h2>Requirements</h2>
+      <p>Turn the brief and the diagrams into testable statements. Each row says where it came from and how you'll know it is met. These IDs are carried into the wireframe and the final checks.</p>
+      <dl class="dl"><dt>Output:</dt><dd>Requirements table + content inventory.</dd><dt>Done when:</dt><dd>Every requirement has an acceptance test.</dd></dl>
+    </div>
+
+    <h3>Functional</h3>
+    <div class="scroll-x"><table>
+      <thead><tr><th>ID</th><th>Requirement</th><th>Source</th><th>Acceptance test</th></tr></thead>
+      <tbody>
+        <tr><td>R1</td><td>Reader can jump to any of the 7 chapters from anywhere</td><td>Diagram 1, chapter nav</td><td>One click or tap reaches each chapter</td></tr>
+        <tr><td>R2</td><td>Chapter 2 helps the reader choose a list layout</td><td>Brief item 2: "decides between a flat row ... drill-in detail page"</td><td>Answering up to 4 questions always yields one of the 5 layouts, with its reason</td></tr>
+        <tr><td>R3</td><td>Every claim links to a primary source, labelled by type</td><td>Brief: "Cite primary sources"</td><td>Each chapter lists sources tagged Design system, Research, W3C or Gov guidance</td></tr>
+        <tr><td>R4</td><td>Chapter 7 validation steps can be ticked off and remembered</td><td>Diagram 2, "Ticks saved"</td><td>Ticks survive reload; page still works if storage is blocked</td></tr>
+        <tr><td>R5</td><td>Reader can copy the brief in one action</td><td>Diagram 2, "Copy the brief"</td><td>Pasted text matches the brief, items numbered 1 to 7</td></tr>
+        <tr><td>R6</td><td>Current chapter is shown in the nav</td><td>Diagram 1</td><td>Highlight matches the chapter in view</td></tr>
+        <tr><td>R7</td><td>Chapter nav gets out of the way while reading, and comes back on request or at the top</td><td>Reader feedback: full nav covers content on long scrolls</td><td>Rolls up after 140px of further downward scroll; caret reopens it; unrolls on return to its home position</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Non-functional</h3>
+    <div class="scroll-x"><table>
+      <thead><tr><th>ID</th><th>Requirement</th><th>Acceptance test</th></tr></thead>
+      <tbody>
+        <tr><td>N1</td><td>WCAG 2.1 AA (the guide must meet the standard it teaches)</td><td>Text contrast at least 4.5:1, visible keyboard focus, landmarks, toggle buttons expose pressed state, zero axe violations</td></tr>
+        <tr><td>N2</td><td>Works at phone width</td><td>No horizontal page scroll at 400px; nav becomes a chip row</td></tr>
+        <tr><td>N3</td><td>Light and dark themes</td><td>Every color comes from a token defined for both</td></tr>
+        <tr><td>N4</td><td>Complete at rest</td><td>No content hidden until scrolled; reduced motion respected</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Content inventory</h3>
+    <ul>
+      <li>Header: title, scope tags (ASP.NET, WCAG 2.1 AA / ADA Title II, records retention), chapter map of 7</li>
+      <li>Ch 1 Discovery: 5 raw sources + 3 methods + "redesign or digitize" test</li>
+      <li>Ch 2 Object modeling: ORCA steps, field inventory, layout decision helper (5 outcomes)</li>
+      <li>Ch 3 Finding: 6 entry patterns, each with "use when"</li>
+      <li>Ch 4 Grid: columns, sort, group, bulk, edit mode, ARIA grid vs table</li>
+      <li>Ch 5 Workflow: statuses, task list, save-and-resume, approval, exceptions, audit</li>
+      <li>Ch 6 Sequencing: ordered slices</li>
+      <li>Ch 7 Validation: 6 checks with pass criteria</li>
+      <li>Sources: grouped by type; the brief with a copy button</li>
+    </ul>
+    <p class="muted">Content types found: bold-lead list, chapter card, source tag, decision question, checklist item, numbered brief item, pill, button. These become the component list in stage 6.</p>
+  </div>
+</div>
+
+<!-- ===================== STAGE 2 ===================== -->
+<div class="band s2" id="stage-2">
+  <div class="in">
+    <div class="sh">
+      <p>Stage 3 of 8 · Fidelity ███░░░░░</p>
+      <h2 style="margin:0;font-size:24px">Wireframe</h2>
+      <p>Place the content inventory into a layout with no style decisions yet. Grey bars stand in for text; crossed boxes stand in for anything visual. Red notes tie each region back to a requirement.</p>
+      <dl class="dl"><dt>Output:</dt><dd>Desktop and phone layouts.</dd><dt>Done when:</dt><dd>Every requirement ID is placed somewhere.</dd></dl>
+    </div>
+
+    <div class="wf-wrap">
+      <div class="frame">
+        <div class="frame-label">Desktop · 1120px</div>
+        <div class="desk">
+          <div class="box" style="min-height:260px"><span class="tag">R1 R6</span>
+            <div class="line w60"></div><div class="line w80"></div><div class="line w60"></div><div class="line w80"></div><div class="line w40"></div><div class="line w80"></div><div class="line w60"></div>
+          </div>
+          <div class="col">
+            <div class="box"><span class="tag">Header R5</span>
+              <div class="line w40"></div><div class="line big"></div><div class="line w80"></div>
+              <div class="rowN"><div class="box x"></div><div class="box x"></div><div class="box x"></div><div class="box x"></div><div class="box x"></div><div class="box x"></div><div class="box x"></div></div>
+            </div>
+            <div class="box"><span class="tag">Ch 1 · R3</span><div class="line w60"></div><div class="line"></div><div class="line w80"></div></div>
+            <div class="box"><span class="tag">Ch 2 · R2</span><div class="line w40"></div>
+              <div class="desk" style="grid-template-columns:3fr 2fr"><div class="col"><div class="box" style="min-height:22px"></div><div class="box" style="min-height:22px"></div><div class="box" style="min-height:22px"></div></div><div class="box x" style="min-height:80px"></div></div></div>
+            <div class="box"><span class="tag">Ch 3–6</span><div class="line w60"></div><div class="line"></div></div>
+            <div class="box"><span class="tag">Ch 7 · R4</span><div class="line w40"></div><div class="rowN" style="grid-template-columns:repeat(3,1fr)"><div class="box"></div><div class="box"></div><div class="box"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame">
+        <div class="frame-label">Phone · 400px</div>
+        <div class="mob">
+          <div class="chips box" style="flex-direction:row"><span class="tag">R1 N2</span><div class="box"></div><div class="box"></div><div class="box"></div></div>
+          <div class="box"><div class="line big"></div><div class="line w80"></div></div>
+          <div class="box"><div class="line w60"></div><div class="line"></div></div>
+          <div class="box"><span class="tag">R2</span><div class="box" style="min-height:22px"></div><div class="box x" style="min-height:50px"></div></div>
+          <div class="box"><div class="line w40"></div><div class="box" style="min-height:24px"></div><div class="box" style="min-height:24px"></div></div>
+        </div>
+      </div>
+    </div>
+    <ul class="notes" style="margin-top:18px">
+      <li>Chapter map shows all 7 at once on desktop; wraps to 2 per row on phone.</li>
+      <li>Layout helper: questions on the left, live result on the right; result stacks under the questions on phone.</li>
+      <li>Sources sit at the end of each chapter, not in a footer, so R3 can be checked chapter by chapter.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== STAGE 3 ===================== -->
+<div class="band s3" id="stage-3">
+  <div class="in">
+    <div class="sh">
+      <p class="muted">Stage 4 of 8 · Fidelity ████░░░░</p>
+      <h2 style="margin:0;font-size:26px">Content in structure</h2>
+      <p>Replace placeholders with real text inside the real layout, using system fonts and greys only. Problems with length, order and labels show up here, while they're still cheap to fix.</p>
+      <dl class="dl"><dt>Output:</dt><dd>A working lo-fi page.</dd><dt>Done when:</dt><dd>Real content fits without truncation at both widths.</dd></dl>
+    </div>
+    <div class="lo">
+      <nav aria-label="Lo-fi chapters"><strong>Chapters</strong>
+        <ol style="margin-top:8px"><li><a href="#stage-3">Discovery from raw material</a></li><li><a href="#stage-3">Object modeling</a></li><li><a href="#stage-3">Finding things in context</a></li><li><a href="#stage-3">Grid design</a></li><li><a href="#stage-3">Workflow patterns</a></li><li><a href="#stage-3">Sequencing</a></li><li><a href="#stage-3">Validation</a></li></ol>
+      </nav>
+      <div class="panel">
+        <span class="muted">Chapter 1</span>
+        <h3>Discovery from raw material</h3>
+        <p class="muted" style="margin:6px 0 0">Start from the artifacts of the work, not from articles about patterns.</p>
+        <ul>
+          <li><b>Paper forms, blank and filled in.</b> Margin notes, stamps and "see attached" show fields the form is missing.</li>
+          <li><b>The physical filing system.</b> How clerks file and retrieve folders is their real search model; the drawer labels become facets in chapter 3.</li>
+          <li><b>Shadow spreadsheets and logbooks.</b> The grid staff already built, with the columns they care about.</li>
+          <li><b>The governing policy and retention schedule.</b> What the process must do, and how long records must be kept.</li>
+          <li><b>Real retrieval requests.</b> "Find me the one from…" requests become the test set in chapter 7.</li>
+        </ul>
+        <p class="muted" style="margin-top:12px">Finding at this stage: chapter titles in the brief run long ("Discovery from raw material. How to analyze…"). Nav uses the short name only; the full description moves to each chapter's intro.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== STAGE 4 ===================== -->
+<div class="band s4 sys" id="stage-4">
+  <div class="in">
+    <div class="sh">
+      <div class="meter" aria-label="Fidelity 5 of 8"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+      <span class="eyebrow">Stage 5 of 8</span>
+      <h2>Design tokens</h2>
+      <p class="what">Decide color, type, radius and depth once, as named values for both themes. Nothing in later stages uses a raw value. That is what makes requirement N3 testable.</p>
+      <dl class="dl"><dt>Output</dt><dd>Token set for light and dark.</dd><dt>Done when</dt><dd>Text tokens pass 4.5:1 on their surfaces in both themes.</dd></dl>
+    </div>
+    <div class="grid">
+      <div class="card"><span class="eyebrow">Color · light</span>
+        <div class="swatches">
+          <div class="sw"><i style="background:#f5f7f8"></i>bg #f5f7f8</div>
+          <div class="sw"><i style="background:#ffffff"></i>surface #ffffff</div>
+          <div class="sw"><i style="background:#12191c"></i>fg #12191c</div>
+          <div class="sw"><i style="background:#0e7a6c"></i>accent #0e7a6c</div>
+        </div></div>
+      <div class="card"><span class="eyebrow">Color · dark</span>
+        <div class="swatches">
+          <div class="sw"><i style="background:#0c1113"></i>bg #0c1113</div>
+          <div class="sw"><i style="background:#141b1e"></i>surface #141b1e</div>
+          <div class="sw"><i style="background:#e8eef0"></i>fg #e8eef0</div>
+          <div class="sw"><i style="background:#4cc3b0"></i>accent #4cc3b0</div>
+        </div></div>
+      <div class="card"><span class="eyebrow">Type</span>
+        <div class="specimen"><span class="d">Paper to digital</span><span>Geist for body text, kept near 65 characters per line.</span><span class="m">Geist Mono · labels, IDs, source tags</span></div></div>
+      <div class="card"><span class="eyebrow">Radius</span>
+        <div class="radii"><div><i style="border-radius:10px"></i>10 · small</div><div><i style="border-radius:14px"></i>14 · item</div><div><i style="border-radius:22px"></i>22 · panel</div><div><i style="border-radius:999px;width:70px"></i>pill</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== STAGE 5 ===================== -->
+<div class="band s5 sys" id="stage-5">
+  <div class="in">
+    <div class="sh">
+      <div class="meter" aria-label="Fidelity 6 of 8"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+      <span class="eyebrow">Stage 6 of 8</span>
+      <h2>Components</h2>
+      <p class="what">Build each content type from the inventory once, with every state it can be in. The button and checklist item here are live.</p>
+      <dl class="dl"><dt>Output</dt><dd>One spec per component, all states.</dd><dt>Done when</dt><dd>Each state is reachable by keyboard and has a visible focus ring.</dd></dl>
+    </div>
+    <div class="matrix">
+      <div class="spec"><span class="eyebrow">Chapter nav link · R1 R6</span>
+        <div><a class="navlink" href="#stage-5"><span>01</span>Default</a><a class="navlink hover" href="#stage-5"><span>02</span>Hover</a><a class="navlink active" href="#stage-5"><span>03</span>Current chapter</a></div></div>
+      <div class="spec"><span class="eyebrow">Source tag · R3</span>
+        <div class="states"><span class="src"><b>Design system</b> GOV.UK</span><span class="src"><b>Research</b> NN/g</span><span class="src"><b>W3C</b> APG Grid</span><span class="src"><b>Gov guidance</b> Digital.gov</span></div>
+        <span class="cap">type label in accent + source name; never color alone</span></div>
+      <div class="spec"><span class="eyebrow">Button · R5</span>
+        <div class="states"><button class="btn" type="button" id="demo-copy">Copy the brief</button><span class="cap">idle → copied → idle</span></div>
+        <div class="states"><span class="pill">ASP.NET</span><span class="pill">WCAG 2.1 AA</span><span class="cap">scope pill</span></div></div>
+      <div class="spec"><span class="eyebrow">Checklist item · R4</span>
+        <label class="check"><input type="checkbox" id="demo-check"><span><b>Known-item retrieval test</b>20 real past "find me…" requests, each found within a set time.</span></label>
+        <span class="cap">checked state changes fill and background, not color alone</span></div>
+      <div class="spec wide"><span class="eyebrow">Chapter panel · rolling behavior · R7</span>
+        <p style="margin:0;max-width:70ch">The panel has two states, <b>unrolled</b> (full chapter list) and <b>rolled</b> (a slim pill showing the current chapter and a caret). Scroll position moves it between them automatically, and the caret lets the reader override that. Try it in the hi-fi band below.</p>
+        <ol class="roll-steps">
+          <li><b>Home position</b>The panel sits at the top of its column, fully unrolled, like any other part of the page.</li>
+          <li><b>Sticks</b>Once its top reaches 20px from the top of the window, it stops moving and stays in view. It is still fully unrolled, so the reader sees every chapter once.</li>
+          <li><b>Rolls up</b>After 140px more of downward scrolling, the list folds up from the bottom: links fade out last-to-first, the list tilts back, and the panel shrinks into a pill showing the current chapter.</li>
+          <li><b>Caret toggles</b>Clicking the caret unrolls or rolls it by hand. A manual choice is kept, so scrolling won't undo it until the panel returns home.</li>
+          <li><b>Unrolls at home</b>Scrolling back up until the panel is at its home position unrolls it (links fade back in first-to-last), and the manual override is cleared.</li>
+        </ol>
+        <span class="cap">While rolled, the hidden links are inert so keyboard focus skips them. The caret announces expanded or collapsed. Reduced motion turns off the animation; the state change still happens.</span></div>
+      <div class="spec wide"><span class="eyebrow">Decision question · R2</span>
+        <div class="states"><div class="q" style="flex:1;min-width:240px"><p>Does each record have child records?</p><div class="seg" role="group" aria-label="Example"><button type="button" aria-pressed="true">Yes</button><button type="button" aria-pressed="false">No</button></div></div>
+        <div class="q" aria-disabled="true" style="flex:1;min-width:240px"><p>Not reached yet</p><div class="seg"><button type="button" disabled>Yes</button><button type="button" disabled>No</button></div></div></div>
+        <span class="cap">answered / not yet reached. Segmented buttons expose aria-pressed</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== STAGE 6 ===================== -->
+<div class="band s6 sys" id="stage-6">
+  <div class="in">
+    <div class="sh">
+      <div class="meter" aria-label="Fidelity 7 of 8"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+      <span class="eyebrow">Stage 7 of 8</span>
+      <h2>Hi-fi assembly</h2>
+      <p class="what">Compose the components into the wireframe's layout with real content. Depth, a soft accent glow and generous spacing come last, once structure is settled.</p>
+      <p class="what" style="font-size:14.5px">On desktop, scroll through this band to see the chapter panel stick, roll into a pill, and unroll when you scroll back to the top. The steps are listed under Components above.</p>
+    </div>
+    <div class="hf">
+      <nav class="hf-toc" id="hf-toc" aria-label="Guide chapters (example)">
+        <div class="toc-head">
+          <span class="eyebrow">Chapters</span>
+          <span class="toc-current" id="toc-current" aria-hidden="true">02 · Object modeling</span>
+          <button class="caret" id="toc-caret" type="button" aria-expanded="true" aria-controls="toc-body" aria-label="Collapse chapters"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5.25 7 9.25 11 5.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+        <div class="toc-body" id="toc-body"><div class="toc-roll">
+          <a class="navlink" style="--i:0" href="#hf-hero"><span>01</span>Discovery</a>
+          <a class="navlink active" style="--i:1" href="#hf-ch2"><span>02</span>Object modeling</a>
+          <a class="navlink" style="--i:2" href="#hf-ch2"><span>03</span>Finding things</a>
+          <a class="navlink" style="--i:3" href="#hf-ch2"><span>04</span>Grid design</a>
+          <a class="navlink" style="--i:4" href="#hf-ch2"><span>05</span>Workflow patterns</a>
+          <a class="navlink" style="--i:5" href="#hf-ch2"><span>06</span>Sequencing</a>
+          <a class="navlink" style="--i:6" href="#hf-brief"><span>07</span>Validation</a>
+        </div></div>
+      </nav>
+      <div class="hf-main">
+        <div class="hf-card" id="hf-hero">
+          <div class="meta"><span class="pill">Practitioner's guide</span><span class="pill">ASP.NET</span><span class="pill">WCAG 2.1 AA · ADA Title II</span><span class="pill">Records retention</span></div>
+          <h1>Replacing a paper workflow with a web app</h1>
+          <p class="lede">How experienced UX and service designers take a government paper process from filing cabinet to working software, in the order the decisions depend on each other.</p>
+          <ol class="chapters">
+            <li><em>01</em><b>Discovery from raw material</b></li>
+            <li><em>02</em><b>Object modeling</b></li>
+            <li><em>03</em><b>Finding things in context</b></li>
+            <li><em>04</em><b>Grid design</b></li>
+            <li><em>05</em><b>Workflow patterns</b></li>
+            <li><em>06</em><b>Sequencing</b></li>
+            <li><em>07</em><b>Validation</b></li>
+          </ol>
+        </div>
+
+        <div class="hf-card" id="hf-ch2">
+          <span class="eyebrow">Chapter 02 · Object modeling</span>
+          <h2>Let the relationships pick the layout</h2>
+          <p class="lede" style="font-size:15.5px">After ORCA mapping (objects, relationships, calls to action, attributes), the question "nested grid or single row?" becomes a few questions about how a record relates to its children. Answer them for your object.</p>
+          <div class="decide">
+            <div class="qs" id="qs">
+              <div class="q" data-q="0"><p>Does each record have child records (e.g. a Case has Inspections)?</p><div class="seg" role="group" aria-label="Child records"><button type="button" data-a="yes" aria-pressed="false">Yes</button><button type="button" data-a="no" aria-pressed="false">No</button></div></div>
+              <div class="q" data-q="1"><p>Do users compare children across many parents at once?</p><div class="seg" role="group" aria-label="Compare across parents"><button type="button" data-a="yes" aria-pressed="false">Yes</button><button type="button" data-a="no" aria-pressed="false">No</button></div></div>
+              <div class="q" data-q="2"><p>Are children few and only glanced at, not edited?</p><div class="seg" role="group" aria-label="Few, read-only children"><button type="button" data-a="yes" aria-pressed="false">Yes</button><button type="button" data-a="no" aria-pressed="false">No</button></div></div>
+              <div class="q" data-q="3"><p>Do users work through records one after another, keeping the list in view?</p><div class="seg" role="group" aria-label="Work through in sequence"><button type="button" data-a="yes" aria-pressed="false">Yes</button><button type="button" data-a="no" aria-pressed="false">No</button></div></div>
+            </div>
+            <div class="result" aria-live="polite">
+              <span class="eyebrow">Starting layout</span>
+              <h4 id="r-name">Answer the first question</h4>
+              <p id="r-why">The result updates as you answer.</p>
+              <div class="mini" id="r-mini"><i></i><i></i><i></i></div>
+              <p class="cap" style="margin-top:6px">A starting rule to test with users, not a verdict.</p>
+            </div>
+          </div>
+          <div class="meta"><span class="src"><b>Research</b> OOUX · ORCA process</span><span class="src"><b>Design system</b> Carbon Data table</span><span class="src"><b>Design system</b> Fluent DataGrid</span><span class="src"><b>Research</b> NN/g list-detail</span></div>
+        </div>
+
+        <div class="hf-card" id="hf-brief">
+          <span class="eyebrow">Brief</span>
+          <h2>The research prompt behind this guide</h2>
+          <div class="prompt">
+            <div class="prompt-top"><span class="pill">Ready to paste</span><button class="btn" type="button" id="hf-copy">Copy the brief</button></div>
+            <div id="brief">
+              <p>I'm replacing a paper-based government workflow with a web application (ASP.NET stack, public-sector context, must meet WCAG 2.1 AA / ADA Title II and records-retention requirements). Research how experienced UX and service designers approach this, and produce a practitioner's guide covering:</p>
+              <ol style="margin:12px 0">
+                <li><span><strong>Discovery from raw material.</strong> How to analyze the paper forms (blank and filled, with annotations), the physical filing system, staff shadow spreadsheets and logbooks, the governing policy, and real retrieval requests. Include contextual inquiry, swimlane process mapping and service blueprinting, and how to tell when to redesign a step rather than digitize it.</span></li>
+                <li><span><strong>Object modeling.</strong> How OOUX/ORCA (objects, relationships, calls to action, attributes) and a field inventory turn that material into a domain model, and how that model decides between a flat row, an expandable row, a nested grid, a master-detail layout, or a drill-in detail page. Give concrete decision criteria and examples from GOV.UK, USWDS, Carbon, Fluent and Salesforce Lightning.</span></li>
+                <li><span><strong>Finding things in context.</strong> When the primary entry point should be a work queue, browsing, simple search, faceted filtering, grouping, or advanced search and saved queries. How the filing system and retrieval requests should set the facets and search fields, and what NN/g and other evidence says about each pattern.</span></li>
+                <li><span><strong>Grid design.</strong> Choosing default columns, sorting, grouping, bulk actions, inline versus panel editing, and accessible ARIA grid versus table implementation.</span></li>
+                <li><span><strong>Workflow patterns.</strong> Statuses, task lists, save-and-resume, review and approval, exceptions, audit trail.</span></li>
+                <li><span><strong>Sequencing.</strong> A recommended build order as thin vertical slices, with the reasoning for it.</span></li>
+                <li><span><strong>Validation.</strong> How to set a paper-process baseline and prove the new system is better: usability metrics, a known-item retrieval test, tree testing, search log analysis, operational KPIs, accessibility audit.</span></li>
+              </ol>
+              <p>Cite primary sources (design system documentation, NN/g and Baymard research, W3C APG, government digital service guidance) and name specific tools for each method.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== STAGE 7 ===================== -->
+<div class="band s7 sys" id="stage-7">
+  <div class="in ship">
+    <div class="sh" style="margin-bottom:0">
+      <div class="meter" aria-label="Fidelity 8 of 8"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+      <span class="eyebrow">Stage 8 of 8</span>
+      <h2>Validate and ship</h2>
+      <p class="what">Check the finished guide against the stage 2 requirements, using evidence from outside the build: real readers, tools and the acceptance tests. Anything that fails goes back to requirements, as the loop in diagram 3 shows.</p>
+    </div>
+    <div class="progress"><div class="bar"><i id="bar"></i></div><span id="count">0 of 11 passed</span></div>
+    <ul class="checks">
+      <li><label class="check"><input type="checkbox" id="v1"><span><b>R1 · Chapter nav</b>Five readers each reach all 7 chapters in one action.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v2"><span><b>R2 · Layout helper</b>Every answer path ends in one of the 5 layouts, with a reason shown.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v3"><span><b>R3 · Sources</b>Every chapter ends with typed primary sources; no claim is unsourced.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v4"><span><b>R4 · Ticks persist</b>Survive reload; page still renders with storage blocked.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v5"><span><b>R5 · Copy the brief</b>Pasted text matches, numbered 1 to 7, in browser and desktop app.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v6"><span><b>R6 · Current chapter</b>Highlight follows scroll in both directions.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v11"><span><b>R7 · Rolling chapter panel</b>Rolls after 140px past sticking, caret reopens and stays open, unrolls at home; focus skips hidden links.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v7"><span><b>N1 · Accessibility</b>axe reports zero violations; NVDA reads landmarks, pressed states and checkboxes.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v8"><span><b>N2 · Phone width</b>No sideways page scroll at 400px.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v9"><span><b>N3 · Themes</b>Light, dark and system settings all readable.</span></label></li>
+      <li><label class="check"><input type="checkbox" id="v10"><span><b>N4 · Complete at rest</b>First screen shows content with motion turned off.</span></label></li>
+    </ul>
+    <p class="cap">Ticks are saved in this browser only.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* copy buttons */
+  var brief=document.getElementById('brief');
+  function briefText(){
+    var ps=brief.querySelectorAll(':scope > p');
+    var items=[].map.call(brief.querySelectorAll('li'),function(li,i){return (i+1)+'. '+li.textContent.trim().replace(/\s+/g,' ')});
+    return ps[0].textContent.trim()+'\n\n'+items.join('\n')+'\n\n'+ps[1].textContent.trim();
+  }
+  function wireCopy(btn,label){
+    btn.addEventListener('click',function(){
+      var done=function(){btn.textContent='Copied';btn.classList.add('done');setTimeout(function(){btn.textContent=label;btn.classList.remove('done')},1800)};
+      var fail=function(){var r=document.createRange();r.selectNodeContents(brief);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='Selected, press Ctrl+C'};
+      try{navigator.clipboard.writeText(briefText()).then(done,fail)}catch(e){fail()}
+    });
+  }
+  wireCopy(document.getElementById('hf-copy'),'Copy the brief');
+  wireCopy(document.getElementById('demo-copy'),'Copy the brief');
+
+  /* layout decision helper */
+  var answers=[null,null,null,null];
+  var qs=[].slice.call(document.querySelectorAll('#qs .q'));
+  var L={
+    flat:{n:'Flat row',w:'No children, so every attribute fits on one row. Spend the effort on choosing default columns (chapter 4).',m:'<i></i><i></i><i></i><i></i>'},
+    nested:{n:'Nested or grouped grid',w:'Users compare child records across parents, so the children need to be in the grid itself. Consider grouping by parent before true nesting.',m:'<i></i><i class="c"></i><i class="c"></i><i></i><i class="c"></i>'},
+    expand:{n:'Expandable row',w:'A few read-only children can open under their parent without leaving the list.',m:'<i></i><i></i><i class="c"></i><i class="c"></i><i></i>'},
+    md:{n:'Master-detail',w:'Users move through records in sequence and edit children, so keep the list beside a detail pane.',m:''},
+    drill:{n:'Drill-in detail page',w:'Children are edited and records are handled one at a time, so give each record its own page with the children inside it.',m:'<i></i><i></i><i></i>'}
+  };
+  function path(){
+    if(answers[0]===null)return {active:1,res:null};
+    if(answers[0]==='no')return {active:1,res:'flat'};
+    if(answers[1]===null)return {active:2,res:null};
+    if(answers[1]==='yes')return {active:2,res:'nested'};
+    if(answers[2]===null)return {active:3,res:null};
+    if(answers[2]==='yes')return {active:3,res:'expand'};
+    if(answers[3]===null)return {active:4,res:null};
+    return {active:4,res:answers[3]==='yes'?'md':'drill'};
+  }
+  function render(){
+    var p=path();
+    qs.forEach(function(q,i){
+      var on=i<p.active;
+      q.setAttribute('aria-disabled',on?'false':'true');
+      [].forEach.call(q.querySelectorAll('button'),function(b){b.disabled=!on;b.setAttribute('aria-pressed',String(on&&answers[i]===b.dataset.a))});
+    });
+    var name=document.getElementById('r-name'),why=document.getElementById('r-why'),mini=document.getElementById('r-mini');
+    if(p.res){var r=L[p.res];name.textContent=r.n;why.textContent=r.w;
+      if(p.res==='md'){mini.className='mini md';mini.innerHTML='<div><i></i><i></i><i></i></div><div><i></i></div>'}else{mini.className='mini';mini.innerHTML=r.m}}
+    else{name.textContent=answers[0]===null?'Answer the first question':'Keep going';why.textContent='The result updates as you answer.';mini.className='mini';mini.innerHTML='<i></i><i></i><i></i>'}
+  }
+  qs.forEach(function(q,i){
+    [].forEach.call(q.querySelectorAll('button'),function(b){
+      b.addEventListener('click',function(){answers[i]=b.dataset.a;for(var j=i+1;j<answers.length;j++)answers[j]=null;render()});
+    });
+  });
+  render();
+
+  /* chapters panel: rolls up after it sticks and the reader keeps scrolling down; unrolls back at its home position */
+  var toc=document.getElementById('hf-toc'),hf=document.querySelector('.hf'),caret=document.getElementById('toc-caret'),tbody=document.getElementById('toc-body');
+  var manual=false,lastY=window.scrollY,ticking=false,ROLL_AFTER=140,wasStuck=false,lockUntil=0;
+  function setRolled(r,auto){
+    /* after an automatic change, ignore scroll for the length of the animation so layout shifts can't bounce it back */
+    if(auto)lockUntil=performance.now()+700;
+    toc.classList.toggle('rolled',r);
+    caret.setAttribute('aria-expanded',String(!r));
+    caret.setAttribute('aria-label',r?'Expand chapters':'Collapse chapters');
+    tbody.inert=r;
+  }
+  function onScroll(){
+    ticking=false;
+    var y=window.scrollY,dy=y-lastY;lastY=y;
+    if(toc.offsetParent===null||dy===0)return;
+    if(performance.now()<lockUntil)return;
+    var stickTop=parseFloat(getComputedStyle(toc).top)||0;
+    var past=stickTop-hf.getBoundingClientRect().top;
+    var rolled=toc.classList.contains('rolled');
+    if(past<=0){
+      /* unroll only while the reader is scrolling up, and only on the way back home */
+      if(wasStuck&&dy<0){wasStuck=false;manual=false;if(rolled)setRolled(false,true)}
+      return;
+    }
+    wasStuck=true;
+    /* roll only on real downward scrolling well past the stick point; a big single jump is a layout shift, not the reader */
+    if(!manual&&dy>0&&dy<400&&past>ROLL_AFTER&&!rolled)setRolled(true,true);
+  }
+  window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(onScroll)}},{passive:true});
+  caret.addEventListener('click',function(){manual=true;setRolled(!toc.classList.contains('rolled'))});
+  [].forEach.call(toc.querySelectorAll('.toc-roll a'),function(a){a.addEventListener('click',function(){
+    [].forEach.call(toc.querySelectorAll('.toc-roll a'),function(o){o.classList.toggle('active',o===a)});
+    document.getElementById('toc-current').textContent=a.querySelector('span').textContent+' · '+a.textContent.replace(a.querySelector('span').textContent,'').trim();
+  })});
+
+  /* validation checklist */
+  var boxes=[].slice.call(document.querySelectorAll('.checks input'));
+  var KEY='fgt-checks-v2';
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'[]');boxes.forEach(function(b){b.checked=saved.indexOf(b.id)>-1})}catch(e){}
+  function update(){
+    var on=boxes.filter(function(b){return b.checked});
+    document.getElementById('bar').style.width=(on.length/boxes.length*100)+'%';
+    document.getElementById('count').textContent=on.length+' of '+boxes.length+' passed';
+    try{localStorage.setItem(KEY,JSON.stringify(on.map(function(b){return b.id})))}catch(e){}
+  }
+  boxes.forEach(function(b){b.addEventListener('change',update)});update();
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+(function(){
+  var dark=document.documentElement.dataset.theme==='dark'||(document.documentElement.dataset.theme!=='light'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+  if(window.mermaid){mermaid.initialize({startOnLoad:true,theme:dark?'dark':'default',securityLevel:'strict'});}
+})();
+</script>
+</body>
+</html>
